@@ -19,9 +19,11 @@ class RoborockDyadStateCode(RoborockEnum):
     reserving = 12
     mop_washing_paused = 13
     dusting_mode = 14
+    combination = 15
 
 
 class DyadSelfCleanMode(RoborockEnum):
+    unknown = -999
     self_clean = 1
     self_clean_and_dry = 2
     dry = 3
@@ -29,22 +31,26 @@ class DyadSelfCleanMode(RoborockEnum):
 
 
 class DyadSelfCleanLevel(RoborockEnum):
+    unknown = -999
     normal = 1
     deep = 2
 
 
 class DyadWarmLevel(RoborockEnum):
+    unknown = -999
     normal = 1
     deep = 2
 
 
 class DyadMode(RoborockEnum):
+    unknown = -999
     wash = 1
     wash_and_dry = 2
     dry = 3
 
 
 class DyadCleanMode(RoborockEnum):
+    unknown = -999
     auto = 1
     max = 2
     dehydration = 3
@@ -52,6 +58,7 @@ class DyadCleanMode(RoborockEnum):
 
 
 class DyadSuction(RoborockEnum):
+    unknown = -999
     l1 = 1
     l2 = 2
     l3 = 3
@@ -61,6 +68,7 @@ class DyadSuction(RoborockEnum):
 
 
 class DyadWaterLevel(RoborockEnum):
+    unknown = -999
     l1 = 1
     l2 = 2
     l3 = 3
@@ -68,18 +76,51 @@ class DyadWaterLevel(RoborockEnum):
 
 
 class DyadBrushSpeed(RoborockEnum):
+    unknown = -999
     l1 = 1
     l2 = 2
 
 
 class DyadCleanser(RoborockEnum):
+    unknown = -999
     none = 0
     normal = 1
     deep = 2
     max = 3
 
 
+class DyadCleanserAmount(RoborockEnum):
+    unknown = -999
+    none = 0
+    low = 1
+    normal = 2
+    high = 3
+
+
+class DyadCleanAssistPower(RoborockEnum):
+    unknown = -999
+    low = 1
+    middle = 2
+    highest = 3
+
+
+class DyadSelfCleanWaterTempLevel(RoborockEnum):
+    unknown = -999
+    low = 1
+    mid = 2
+    high = 3
+    hot_water = 4
+    steam = 5
+
+
+class DyadDockType(RoborockEnum):
+    unknown = 0
+    normal = 1
+    turbo = 2
+
+
 class DyadError(RoborockEnum):
+    unknown = -999
     none = 0
     dirty_tank_full = 20000  # Dirty tank full. Empty it
     water_level_sensor_stuck = 20001  # Water level sensor is stuck. Clean it.

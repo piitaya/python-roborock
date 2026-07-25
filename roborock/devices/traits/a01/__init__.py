@@ -27,10 +27,14 @@ from typing import Any
 from roborock.data import DyadProductInfo, DyadSndState, HomeDataProduct, RoborockCategory
 from roborock.data.dyad.dyad_code_mappings import (
     DyadBrushSpeed,
+    DyadCleanAssistPower,
     DyadCleanMode,
+    DyadCleanserAmount,
+    DyadDockType,
     DyadError,
     DyadSelfCleanLevel,
     DyadSelfCleanMode,
+    DyadSelfCleanWaterTempLevel,
     DyadSuction,
     DyadWarmLevel,
     DyadWaterLevel,
@@ -69,6 +73,7 @@ DYAD_PROTOCOL_ENTRIES: dict[RoborockDyadDataProtocol, Callable] = {
     RoborockDyadDataProtocol.WATER_LEVEL: lambda val: DyadWaterLevel(val).name,
     RoborockDyadDataProtocol.BRUSH_SPEED: lambda val: DyadBrushSpeed(val).name,
     RoborockDyadDataProtocol.POWER: lambda val: int(val),
+    RoborockDyadDataProtocol.AUTO_SELF_CLEAN_SET: lambda val: bool(val),
     RoborockDyadDataProtocol.AUTO_DRY: lambda val: bool(val),
     RoborockDyadDataProtocol.MESH_LEFT: lambda val: int(360000 - val * 60),
     RoborockDyadDataProtocol.BRUSH_LEFT: lambda val: int(360000 - val * 60),
@@ -88,6 +93,17 @@ DYAD_PROTOCOL_ENTRIES: dict[RoborockDyadDataProtocol, Callable] = {
         int(v) for v in val.split(",")
     ],  # minutes of cleaning in past few days.
     RoborockDyadDataProtocol.TOTAL_RUN_TIME: lambda val: int(val),
+    RoborockDyadDataProtocol.DOCK_TYPE: lambda val: DyadDockType(val).name,
+    RoborockDyadDataProtocol.SET_CLEANSER_AMOUNT: lambda val: DyadCleanserAmount(val).name,
+    RoborockDyadDataProtocol.AUTO_SMART_SELF_CLEAN_SET: lambda val: bool(val),
+    RoborockDyadDataProtocol.LIGHT_SET: lambda val: bool(val),
+    RoborockDyadDataProtocol.CLEAN_ASSIST_POWER_SET: lambda val: DyadCleanAssistPower(val).name,
+    RoborockDyadDataProtocol.SELF_CLEAN_WATER_TEMP_LEVEL_SET: lambda val: DyadSelfCleanWaterTempLevel(val).name,
+    RoborockDyadDataProtocol.WATER_MODE_SUCTION: lambda val: DyadSuction(val).name,
+    RoborockDyadDataProtocol.WATER_MODE_BRUSH_SPEED: lambda val: DyadBrushSpeed(val).name,
+    RoborockDyadDataProtocol.CHARGE_ERROR_STATUS: lambda val: int(val),
+    RoborockDyadDataProtocol.DRYING_RATE: lambda val: int(val),
+    RoborockDyadDataProtocol.FLAT_STATUS: lambda val: bool(val),
     RoborockDyadDataProtocol.SND_STATE: lambda val: DyadSndState.from_dict(val),
     RoborockDyadDataProtocol.PRODUCT_INFO: lambda val: DyadProductInfo.from_dict(val),
 }

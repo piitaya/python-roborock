@@ -136,6 +136,86 @@ async def test_dyad_invalid_response_value(
     assert result == expected_result
 
 
+async def test_dyad_api_query_wetdryvac_values(dyad_api: DyadApi, fake_channel: FakeChannel):
+    """Newer wet/dry vac dps (e.g. F25) decode instead of colliding on DRYING_STATUS."""
+    fake_channel.response_queue.append(
+        build_a01_message(
+            {
+                243: 2,  # DOCK_TYPE
+                247: 100,  # DRYING_RATE
+                238: 2,  # SET_CLEANSER_AMOUNT
+                242: 3,  # SELF_CLEAN_WATER_TEMP_LEVEL_SET
+                241: 1,  # CLEAN_ASSIST_POWER_SET
+                244: 3,  # WATER_MODE_SUCTION
+                245: 2,  # WATER_MODE_BRUSH_SPEED
+                240: 1,  # LIGHT_SET
+                239: 1,  # AUTO_SMART_SELF_CLEAN_SET
+                248: 0,  # FLAT_STATUS
+            }
+        )
+    )
+    result = await dyad_api.query_values(
+        [
+            RoborockDyadDataProtocol.DOCK_TYPE,
+            RoborockDyadDataProtocol.DRYING_RATE,
+            RoborockDyadDataProtocol.SET_CLEANSER_AMOUNT,
+            RoborockDyadDataProtocol.SELF_CLEAN_WATER_TEMP_LEVEL_SET,
+            RoborockDyadDataProtocol.CLEAN_ASSIST_POWER_SET,
+            RoborockDyadDataProtocol.WATER_MODE_SUCTION,
+            RoborockDyadDataProtocol.WATER_MODE_BRUSH_SPEED,
+            RoborockDyadDataProtocol.LIGHT_SET,
+            RoborockDyadDataProtocol.AUTO_SMART_SELF_CLEAN_SET,
+            RoborockDyadDataProtocol.FLAT_STATUS,
+        ]
+    )
+    assert result == {
+        RoborockDyadDataProtocol.DOCK_TYPE: "turbo",
+        RoborockDyadDataProtocol.DRYING_RATE: 100,
+        RoborockDyadDataProtocol.SET_CLEANSER_AMOUNT: "normal",
+        RoborockDyadDataProtocol.SELF_CLEAN_WATER_TEMP_LEVEL_SET: "high",
+        RoborockDyadDataProtocol.CLEAN_ASSIST_POWER_SET: "low",
+        RoborockDyadDataProtocol.WATER_MODE_SUCTION: "l3",
+        RoborockDyadDataProtocol.WATER_MODE_BRUSH_SPEED: "l2",
+        RoborockDyadDataProtocol.LIGHT_SET: True,
+        RoborockDyadDataProtocol.AUTO_SMART_SELF_CLEAN_SET: True,
+        RoborockDyadDataProtocol.FLAT_STATUS: False,
+    }
+
+
+async def test_dyad_out_of_range_enum_is_unknown(dyad_api: DyadApi, fake_channel: FakeChannel):
+    """Out-of-range enum values decode to 'unknown' rather than a plausible-but-wrong label."""
+    fake_channel.response_queue.append(
+        build_a01_message(
+            {
+                206: 7,  # SUCTION
+                207: 9,  # WATER_LEVEL
+                216: 99999,  # ERROR
+                243: 5,  # DOCK_TYPE
+                242: 9,  # SELF_CLEAN_WATER_TEMP_LEVEL_SET
+                241: 9,  # CLEAN_ASSIST_POWER_SET
+            }
+        )
+    )
+    result = await dyad_api.query_values(
+        [
+            RoborockDyadDataProtocol.SUCTION,
+            RoborockDyadDataProtocol.WATER_LEVEL,
+            RoborockDyadDataProtocol.ERROR,
+            RoborockDyadDataProtocol.DOCK_TYPE,
+            RoborockDyadDataProtocol.SELF_CLEAN_WATER_TEMP_LEVEL_SET,
+            RoborockDyadDataProtocol.CLEAN_ASSIST_POWER_SET,
+        ]
+    )
+    assert result == {
+        RoborockDyadDataProtocol.SUCTION: "unknown",
+        RoborockDyadDataProtocol.WATER_LEVEL: "unknown",
+        RoborockDyadDataProtocol.ERROR: "unknown",
+        RoborockDyadDataProtocol.DOCK_TYPE: "unknown",
+        RoborockDyadDataProtocol.SELF_CLEAN_WATER_TEMP_LEVEL_SET: "unknown",
+        RoborockDyadDataProtocol.CLEAN_ASSIST_POWER_SET: "unknown",
+    }
+
+
 async def test_zeo_api_query_values(zeo_api: ZeoApi, fake_channel: FakeChannel):
     """Test that ZeoApi currently returns raw values without conversion."""
     fake_channel.response_queue.append(
